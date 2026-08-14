@@ -1,0 +1,60 @@
+{
+  "_meta": {
+    "description": "Curated list of Indian mutual funds (Direct-Growth plans). 'scheme_code' maps to api.mfapi.in for live NAV. The 'returns' block is a fallback snapshot (annualised %, illustrative) used only when the live API is unreachable.",
+    "snapshot_date": "2026-08-01",
+    "return_type": "annualised_cagr_percent"
+  },
+  "funds": [
+    { "scheme_code": 118759, "name": "Nippon India Pharma Fund", "amc": "Nippon India", "category": "pharma", "returns": { "1y": 21.4, "3y": 22.8, "5y": 18.9 } },
+    { "scheme_code": 120841, "name": "SBI Healthcare Opportunities Fund", "amc": "SBI", "category": "pharma", "returns": { "1y": 24.1, "3y": 26.7, "5y": 19.4 } },
+    { "scheme_code": 129046, "name": "ICICI Prudential Pharma Healthcare & Diagnostics Fund", "amc": "ICICI Prudential", "category": "pharma", "returns": { "1y": 25.6, "3y": 27.9, "5y": 21.2 } },
+    { "scheme_code": 118530, "name": "UTI Healthcare Fund", "amc": "UTI", "category": "pharma", "returns": { "1y": 19.8, "3y": 21.3, "5y": 16.7 } },
+    { "scheme_code": 133386, "name": "Tata India Pharma & Healthcare Fund", "amc": "Tata", "category": "pharma", "returns": { "1y": 22.9, "3y": 24.5, "5y": 18.1 } },
+    { "scheme_code": 148802, "name": "DSP Healthcare Fund", "amc": "DSP", "category": "pharma", "returns": { "1y": 26.3, "3y": 28.4, "5y": 20.5 } },
+
+    { "scheme_code": 118682, "name": "ICICI Prudential Technology Fund", "amc": "ICICI Prudential", "category": "technology", "returns": { "1y": 18.7, "3y": 16.2, "5y": 24.8 } },
+    { "scheme_code": 120586, "name": "Aditya Birla Sun Life Digital India Fund", "amc": "Aditya Birla Sun Life", "category": "technology", "returns": { "1y": 17.9, "3y": 15.8, "5y": 23.6 } },
+    { "scheme_code": 118533, "name": "Tata Digital India Fund", "amc": "Tata", "category": "technology", "returns": { "1y": 19.4, "3y": 17.1, "5y": 25.3 } },
+    { "scheme_code": 145206, "name": "SBI Technology Opportunities Fund", "amc": "SBI", "category": "technology", "returns": { "1y": 20.1, "3y": 18.6, "5y": 24.1 } },
+
+    { "scheme_code": 118989, "name": "ICICI Prudential Banking & Financial Services Fund", "amc": "ICICI Prudential", "category": "banking", "returns": { "1y": 16.8, "3y": 19.4, "5y": 15.2 } },
+    { "scheme_code": 118473, "name": "SBI Banking & Financial Services Fund", "amc": "SBI", "category": "banking", "returns": { "1y": 17.5, "3y": 20.1, "5y": 16.4 } },
+    { "scheme_code": 130503, "name": "Nippon India Banking & Financial Services Fund", "amc": "Nippon India", "category": "banking", "returns": { "1y": 15.9, "3y": 18.7, "5y": 14.8 } },
+
+    { "scheme_code": 118825, "name": "ICICI Prudential Infrastructure Fund", "amc": "ICICI Prudential", "category": "infrastructure", "returns": { "1y": 23.7, "3y": 32.4, "5y": 26.1 } },
+    { "scheme_code": 100520, "name": "Franklin Build India Fund", "amc": "Franklin Templeton", "category": "infrastructure", "returns": { "1y": 21.9, "3y": 30.8, "5y": 24.5 } },
+    { "scheme_code": 145205, "name": "Quant Infrastructure Fund", "amc": "Quant", "category": "infrastructure", "returns": { "1y": 20.4, "3y": 29.6, "5y": 28.3 } },
+
+    { "scheme_code": 118551, "name": "ICICI Prudential FMCG Fund", "amc": "ICICI Prudential", "category": "fmcg", "returns": { "1y": 12.3, "3y": 15.6, "5y": 14.2 } },
+    { "scheme_code": 103174, "name": "SBI Consumption Opportunities Fund", "amc": "SBI", "category": "fmcg", "returns": { "1y": 14.1, "3y": 17.9, "5y": 16.8 } },
+    { "scheme_code": 118566, "name": "Nippon India Consumption Fund", "amc": "Nippon India", "category": "fmcg", "returns": { "1y": 13.7, "3y": 18.3, "5y": 17.1 } },
+
+    { "scheme_code": 120684, "name": "Tata Resources & Energy Fund", "amc": "Tata", "category": "energy", "returns": { "1y": 15.2, "3y": 21.7, "5y": 22.4 } },
+    { "scheme_code": 118273, "name": "DSP Natural Resources & New Energy Fund", "amc": "DSP", "category": "energy", "returns": { "1y": 14.8, "3y": 20.9, "5y": 21.6 } },
+
+    { "scheme_code": 120465, "name": "Mirae Asset Large Cap Fund", "amc": "Mirae Asset", "category": "largecap", "returns": { "1y": 13.4, "3y": 14.8, "5y": 15.9 } },
+    { "scheme_code": 118825, "name": "ICICI Prudential Bluechip Fund", "amc": "ICICI Prudential", "category": "largecap", "returns": { "1y": 14.2, "3y": 16.1, "5y": 16.7 } },
+    { "scheme_code": 100377, "name": "Nippon India Large Cap Fund", "amc": "Nippon India", "category": "largecap", "returns": { "1y": 15.1, "3y": 17.4, "5y": 17.2 } },
+    { "scheme_code": 125354, "name": "Canara Robeco Bluechip Equity Fund", "amc": "Canara Robeco", "category": "largecap", "returns": { "1y": 12.9, "3y": 13.6, "5y": 15.1 } },
+
+    { "scheme_code": 127042, "name": "Motilal Oswal Midcap Fund", "amc": "Motilal Oswal", "category": "midcap", "returns": { "1y": 22.6, "3y": 31.2, "5y": 27.8 } },
+    { "scheme_code": 118989, "name": "HDFC Mid-Cap Opportunities Fund", "amc": "HDFC", "category": "midcap", "returns": { "1y": 20.3, "3y": 28.7, "5y": 26.4 } },
+    { "scheme_code": 125497, "name": "Nippon India Growth Fund", "amc": "Nippon India", "category": "midcap", "returns": { "1y": 21.1, "3y": 27.9, "5y": 25.6 } },
+
+    { "scheme_code": 118778, "name": "Nippon India Small Cap Fund", "amc": "Nippon India", "category": "smallcap", "returns": { "1y": 24.8, "3y": 33.6, "5y": 32.1 } },
+    { "scheme_code": 125350, "name": "Quant Small Cap Fund", "amc": "Quant", "category": "smallcap", "returns": { "1y": 23.4, "3y": 34.9, "5y": 38.2 } },
+    { "scheme_code": 147946, "name": "Axis Small Cap Fund", "amc": "Axis", "category": "smallcap", "returns": { "1y": 22.1, "3y": 26.8, "5y": 28.9 } },
+
+    { "scheme_code": 122639, "name": "Parag Parikh Flexi Cap Fund", "amc": "PPFAS", "category": "flexicap", "returns": { "1y": 18.6, "3y": 22.4, "5y": 24.7 } },
+    { "scheme_code": 118485, "name": "HDFC Flexi Cap Fund", "amc": "HDFC", "category": "flexicap", "returns": { "1y": 17.2, "3y": 23.1, "5y": 22.3 } },
+    { "scheme_code": 120843, "name": "Quant Flexi Cap Fund", "amc": "Quant", "category": "flexicap", "returns": { "1y": 16.4, "3y": 24.8, "5y": 27.5 } },
+
+    { "scheme_code": 120503, "name": "Quant ELSS Tax Saver Fund", "amc": "Quant", "category": "elss", "returns": { "1y": 17.8, "3y": 25.3, "5y": 30.1 } },
+    { "scheme_code": 118533, "name": "Mirae Asset ELSS Tax Saver Fund", "amc": "Mirae Asset", "category": "elss", "returns": { "1y": 15.6, "3y": 18.2, "5y": 19.8 } },
+    { "scheme_code": 125494, "name": "Bandhan ELSS Tax Saver Fund", "amc": "Bandhan", "category": "elss", "returns": { "1y": 16.1, "3y": 20.4, "5y": 21.3 } },
+
+    { "scheme_code": 120716, "name": "UTI Nifty 50 Index Fund", "amc": "UTI", "category": "index", "returns": { "1y": 12.8, "3y": 13.9, "5y": 15.4 } },
+    { "scheme_code": 147625, "name": "HDFC Index Fund Nifty 50 Plan", "amc": "HDFC", "category": "index", "returns": { "1y": 12.7, "3y": 13.8, "5y": 15.3 } },
+    { "scheme_code": 122639, "name": "ICICI Prudential Nifty Next 50 Index Fund", "amc": "ICICI Prudential", "category": "index", "returns": { "1y": 16.9, "3y": 19.7, "5y": 18.6 } }
+  ]
+}

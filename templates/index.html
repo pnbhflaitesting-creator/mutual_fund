@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mutual Fund Voice Bot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🎙️ Mutual Fund Voice Bot</h1>
+      <p class="tagline">Ask for the top mutual funds by return — by voice.</p>
+    </header>
+
+    <section class="mic-panel">
+      <button id="micBtn" class="mic-btn" aria-label="Tap and speak">
+        <span class="mic-icon">🎤</span>
+      </button>
+      <p id="status" class="status">Tap the mic and ask a question</p>
+
+      <div class="manual">
+        <input id="textInput" type="text"
+               placeholder="…or type: top 5 pharma funds by 3 year return" />
+        <button id="askBtn">Ask</button>
+      </div>
+
+      <div class="examples">
+        <span>Try:</span>
+        <button class="chip" data-q="What are the top 5 mutual funds by 3 year return">Top 5 by 3yr return</button>
+        <button class="chip" data-q="Top 5 pharma funds by 3 year return">Top pharma funds</button>
+        <button class="chip" data-q="Best technology funds over 5 years">Tech, 5 years</button>
+        <button class="chip" data-q="Top 3 small cap funds by 1 year return">Small cap, 1yr</button>
+      </div>
+    </section>
+
+    <section class="answer" id="answer" hidden>
+      <div class="answer-head">
+        <div>
+          <h2 id="answerTitle"></h2>
+          <p id="answerMeta" class="meta"></p>
+        </div>
+        <button id="replayBtn" class="replay" title="Replay answer">🔊 Replay</button>
+      </div>
+      <ol id="fundList" class="fund-list"></ol>
+    </section>
+
+    <p id="heard" class="heard"></p>
+
+    <footer>
+      <p class="disclaimer">
+        Educational demo. Fund returns are fetched live where available and fall
+        back to a bundled snapshot otherwise. Not investment advice.
+      </p>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
