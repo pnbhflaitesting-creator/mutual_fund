@@ -128,7 +128,21 @@ if (SR) {
     try { recognition.start(); } catch (_) {}
   });
 } else {
-  statusEl.textContent = "Voice input isn't supported in this browser — type your question below.";
+  // Distinguish the two real causes so the user knows exactly what to change.
+  const isFirefox = /firefox/i.test(navigator.userAgent);
+  if (!window.isSecureContext) {
+    // Mic APIs are gated to secure origins (localhost or HTTPS).
+    statusEl.innerHTML = "🎙️ Voice needs a secure page. Open this at " +
+      "<b>http://localhost:5000</b> (not an IP or file://) in Chrome or Edge. " +
+      "You can type your question below for now.";
+  } else if (isFirefox) {
+    statusEl.innerHTML = "🎙️ Firefox doesn't support speech-to-text. " +
+      "Open this in <b>Chrome or Edge</b> to talk to the bot — " +
+      "or type your question below (answers are still read aloud).";
+  } else {
+    statusEl.textContent = "Voice input isn't supported in this browser — " +
+      "try Chrome or Edge. You can type your question below.";
+  }
   micBtn.addEventListener("click", () => textInput.focus());
 }
 
