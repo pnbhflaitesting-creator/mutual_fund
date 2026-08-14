@@ -75,10 +75,16 @@ function render(data) {
     const badge = r.live
       ? `<span class="badge live">live</span>`
       : `<span class="badge">snapshot</span>`;
+    const details = [];
+    if (r.expense_ratio != null) details.push(`ER ${r.expense_ratio}%`);
+    if (r.aum_cr != null) details.push(`AUM ₹${Number(r.aum_cr).toLocaleString("en-IN")} cr`);
+    const detailLine = details.length
+      ? `<div class="fund-sub">${details.join(" · ")}</div>` : "";
     li.innerHTML = `
       <div class="fund-info">
         <div class="fund-name">${escapeHtml(r.name)} ${badge}</div>
         <div class="fund-sub">${escapeHtml(r.amc)} · ${escapeHtml(r.category_label)}</div>
+        ${detailLine}
       </div>
       <div class="fund-return">
         <div class="pct">${r.return_pct}%</div>
@@ -88,8 +94,10 @@ function render(data) {
   }
 
   if (data.recommendation) {
-    recName.textContent = `${data.recommendation.name} — ${data.recommendation.return_pct}%`;
-    recReason.textContent = data.recommendation.reason;
+    const rec = data.recommendation;
+    const erBit = rec.expense_ratio != null ? ` · ER ${rec.expense_ratio}%` : "";
+    recName.textContent = `${rec.name} — ${rec.return_pct}%${erBit}`;
+    recReason.textContent = rec.reason;
     recEl.hidden = false;
   } else {
     recEl.hidden = true;

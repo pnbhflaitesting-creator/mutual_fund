@@ -19,10 +19,16 @@ advice):
 
 - It favours **consistency** — a fund that beats its peers' average across the
   1-, 3-, and 5-year windows, not just the single headline number.
-- Ties break on the requested period's return.
-- A **category risk note** is attached (e.g. "sector funds are concentrated and
-  best kept as a satellite holding"; "small-cap funds suit a 7-year+ horizon"),
-  so you understand the trade-off, not just the number.
+- When returns are close, **lower cost wins** — the **expense ratio** breaks the
+  tie, because a cheaper fund keeps more of the return in your pocket.
+- The explanation covers **returns, expense ratio, fund size (AUM), and a
+  category risk note**, and flags a **cheaper alternative** if the pick isn't the
+  cheapest in the list.
+
+> **Where the numbers come from:** returns are live (mfapi.in) with a snapshot
+> fallback. **Expense ratio and AUM are curated snapshot values** in
+> `data/funds.json` — the free NAV API does not provide them — so treat those as
+> illustrative and confirm with the AMC before investing.
 
 Every answer ends with a reminder that this is an educational demo, not
 investment advice.

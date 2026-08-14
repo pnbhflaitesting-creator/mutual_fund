@@ -260,6 +260,8 @@ class FundService:
                 "period": period,
                 "return_pct": ret,
                 "returns_all": returns_all,
+                "expense_ratio": f.get("expense_ratio"),
+                "aum_cr": f.get("aum_cr"),
                 "live": is_live,
             })
 
@@ -270,10 +272,11 @@ class FundService:
     def build_recommendation(self, parsed, ranked):
         """Pick one fund to highlight and explain the reasoning.
 
-        The pick favours *consistency*: a fund that beats its peers' average
-        across the 1/3/5-year windows, not just the single headline period.
-        Ties break on the requested period's return. A category risk note is
-        attached so the user understands the trade-off. This is rule-based and
+        The pick favours *consistency* (a fund that beats its peers' average
+        across the 1/3/5-year windows) and then *cost*: when returns are close,
+        a lower expense ratio wins because it keeps more of the return in the
+        investor's pocket. The reason string explains returns, cost (expense
+        ratio), fund size (AUM) and a category risk note. This is rule-based and
         transparent — an educational suggestion, not personalised advice.
         """
         results = ranked["results"]
@@ -282,22 +285,25 @@ class FundService:
 
         period = parsed["period"]
 
-        # Peer average per period across the shown set (ignoring missing values).
+        # Peer averages across the shown set (ignoring missing values).
         peer_avg = {}
         for pk in ("1y", "3y", "5y"):
             vals = [r["returns_all"].get(pk) for r in results
                     if r["returns_all"].get(pk) is not None]
             peer_avg[pk] = sum(vals) / len(vals) if vals else None
+        exp_vals = [r["expense_ratio"] for r in results if r["expense_ratio"] is not None]
+        avg_expense = sum(exp_vals) / len(exp_vals) if exp_vals else None
 
         def score(r):
             ra = r["returns_all"]
-            # How many windows this fund beats the peer average in.
             consistency = sum(
                 1 for pk in ("1y", "3y", "5y")
                 if ra.get(pk) is not None and peer_avg[pk] is not None
                 and ra[pk] >= peer_avg[pk]
             )
-            return (consistency, r["return_pct"])
+            # Lower expense ratio ranks higher (negated so bigger = better).
+            cost_rank = -(r["expense_ratio"] if r["expense_ratio"] is not None else 99)
+            return (consistency, round(r["return_pct"], 1), cost_rank)
 
         pick = max(results, key=score)
         ra = pick["returns_all"]
@@ -305,32 +311,63 @@ class FundService:
                  if ra.get(pk) is not None and peer_avg[pk] is not None
                  and ra[pk] >= peer_avg[pk]]
 
-        # Rationale text.
         period_label = _PERIOD_KEYS.get(period, period)
         rank_pos = results.index(pick) + 1
+
+        # 1) Returns.
         if rank_pos == 1:
             lead = (f"{pick['name']} looks the strongest of these — it tops the list "
                     f"with {pick['return_pct']}% over {period_label}")
         else:
             lead = (f"{pick['name']} stands out — {pick['return_pct']}% over "
                     f"{period_label}")
-
         if len(beats) >= 2:
             others = [p for p in beats if p != period]
             extra = ", ".join(f"{ra[p]}% over {_PERIOD_KEYS[p]}" for p in others)
-            consistency_txt = (f", and it stays ahead of the pack over other "
+            consistency_txt = (f", and it stays ahead of the peer average over other "
                                f"periods too ({extra})") if extra else ""
         else:
             consistency_txt = (", though its lead is mainly over this one period, "
                                "so check longer-term consistency")
-        note = CATEGORY_RISK_NOTES.get(pick["category"], "")
 
-        reason = f"{lead}{consistency_txt}. {note}".strip()
+        # 2) Cost (expense ratio) + fund size (AUM).
+        cost_txt = ""
+        er = pick["expense_ratio"]
+        if er is not None:
+            if avg_expense is not None and er <= avg_expense:
+                cost_txt = (f" On cost, its expense ratio of {er}% is on the lower "
+                            f"side for this group, so more of the return stays with "
+                            f"you.")
+            else:
+                cost_txt = (f" One watch-out: its expense ratio of {er}% is a bit "
+                            f"above the peer average of {round(avg_expense, 2)}%, which "
+                            f"eats into net returns.")
+        aum = pick.get("aum_cr")
+        if aum is not None:
+            size = ("a large, well-established fund" if aum >= 10000
+                    else "a mid-sized fund" if aum >= 2000
+                    else "a smaller fund (more nimble, but less proven)")
+            cost_txt += f" It's {size} at about Rs {aum:,} crore in assets."
+
+        # 3) A cheaper alternative, if one exists and it isn't the pick.
+        cheapest = min((r for r in results if r["expense_ratio"] is not None),
+                       key=lambda r: r["expense_ratio"], default=None)
+        cheaper_txt = ""
+        if (cheapest and cheapest["scheme_code"] != pick["scheme_code"]
+                and er is not None and cheapest["expense_ratio"] < er - 0.05):
+            cheaper_txt = (f" If you're cost-focused, {cheapest['name']} is the "
+                           f"cheapest here at {cheapest['expense_ratio']}%.")
+
+        note = CATEGORY_RISK_NOTES.get(pick["category"], "")
+        reason = f"{lead}{consistency_txt}.{cost_txt}{cheaper_txt} {note}".strip()
+
         return {
             "name": pick["name"],
             "amc": pick["amc"],
             "scheme_code": pick["scheme_code"],
             "return_pct": pick["return_pct"],
+            "expense_ratio": er,
+            "aum_cr": aum,
             "period": period,
             "reason": reason,
         }
