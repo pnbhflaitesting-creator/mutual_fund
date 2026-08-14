@@ -74,6 +74,37 @@ _NUMBER_WORDS = {
 
 _PERIOD_KEYS = {"1y": "1 year", "3y": "3 year", "5y": "5 year"}
 
+# Plain-language risk / suitability notes per category, used in the
+# recommendation. These are educational, not personalised advice.
+CATEGORY_RISK_NOTES = {
+    "pharma": "It's a sector fund, so it's concentrated in one industry and can "
+              "swing more than a diversified fund — usually best as a small "
+              "satellite holding, not your core.",
+    "technology": "It's a sector fund concentrated in tech, which can be volatile "
+                  "— better as a satellite holding alongside a diversified core.",
+    "banking": "It's a sector fund focused on financials — cyclical and best kept "
+               "to a smaller part of a diversified portfolio.",
+    "infrastructure": "It's a thematic fund tied to the capex cycle — high growth "
+                      "potential but cyclical, so size it as a satellite holding.",
+    "fmcg": "It's a consumption-theme fund — generally steadier than most sector "
+            "funds, but still concentrated in one theme.",
+    "energy": "It's a resources/energy theme fund — commodity-linked and cyclical, "
+              "so keep it a small part of the portfolio.",
+    "largecap": "Large-cap funds are relatively stable and can serve as a core "
+                "holding for most investors.",
+    "midcap": "Mid-cap funds carry higher risk and volatility than large caps — "
+              "suited to a long horizon of five years or more.",
+    "smallcap": "Small-cap funds are high risk and can be very volatile — only "
+                "for a long horizon (seven years or more) and a higher risk "
+                "appetite.",
+    "flexicap": "Flexi-cap funds spread across large, mid and small caps, so they "
+                "work well as a diversified core holding.",
+    "elss": "This is a tax-saving fund with a three-year lock-in and Section 80C "
+            "benefit — plan for the lock-in before investing.",
+    "index": "Index funds passively track a benchmark at low cost — a simple, "
+             "low-maintenance core holding.",
+}
+
 
 class FundService:
     def __init__(self, data_path=DATA_PATH):
@@ -212,6 +243,14 @@ class FundService:
                 ret = f["returns"].get(period)
             if ret is None:
                 continue
+            # All-period returns (live where available, else snapshot), used by
+            # the recommendation engine to judge consistency over time.
+            returns_all = {}
+            for pk in ("1y", "3y", "5y"):
+                if live_res and live_res.get(pk) is not None:
+                    returns_all[pk] = live_res[pk]
+                else:
+                    returns_all[pk] = f["returns"].get(pk)
             results.append({
                 "name": f["name"],
                 "amc": f["amc"],
@@ -220,14 +259,84 @@ class FundService:
                 "scheme_code": f["scheme_code"],
                 "period": period,
                 "return_pct": ret,
+                "returns_all": returns_all,
                 "live": is_live,
             })
 
         results.sort(key=lambda x: x["return_pct"], reverse=True)
         return {"source": source, "results": results[:limit]}
 
+    # ------------------------------------------------------- recommendation
+    def build_recommendation(self, parsed, ranked):
+        """Pick one fund to highlight and explain the reasoning.
+
+        The pick favours *consistency*: a fund that beats its peers' average
+        across the 1/3/5-year windows, not just the single headline period.
+        Ties break on the requested period's return. A category risk note is
+        attached so the user understands the trade-off. This is rule-based and
+        transparent — an educational suggestion, not personalised advice.
+        """
+        results = ranked["results"]
+        if not results:
+            return None
+
+        period = parsed["period"]
+
+        # Peer average per period across the shown set (ignoring missing values).
+        peer_avg = {}
+        for pk in ("1y", "3y", "5y"):
+            vals = [r["returns_all"].get(pk) for r in results
+                    if r["returns_all"].get(pk) is not None]
+            peer_avg[pk] = sum(vals) / len(vals) if vals else None
+
+        def score(r):
+            ra = r["returns_all"]
+            # How many windows this fund beats the peer average in.
+            consistency = sum(
+                1 for pk in ("1y", "3y", "5y")
+                if ra.get(pk) is not None and peer_avg[pk] is not None
+                and ra[pk] >= peer_avg[pk]
+            )
+            return (consistency, r["return_pct"])
+
+        pick = max(results, key=score)
+        ra = pick["returns_all"]
+        beats = [pk for pk in ("1y", "3y", "5y")
+                 if ra.get(pk) is not None and peer_avg[pk] is not None
+                 and ra[pk] >= peer_avg[pk]]
+
+        # Rationale text.
+        period_label = _PERIOD_KEYS.get(period, period)
+        rank_pos = results.index(pick) + 1
+        if rank_pos == 1:
+            lead = (f"{pick['name']} looks the strongest of these — it tops the list "
+                    f"with {pick['return_pct']}% over {period_label}")
+        else:
+            lead = (f"{pick['name']} stands out — {pick['return_pct']}% over "
+                    f"{period_label}")
+
+        if len(beats) >= 2:
+            others = [p for p in beats if p != period]
+            extra = ", ".join(f"{ra[p]}% over {_PERIOD_KEYS[p]}" for p in others)
+            consistency_txt = (f", and it stays ahead of the pack over other "
+                               f"periods too ({extra})") if extra else ""
+        else:
+            consistency_txt = (", though its lead is mainly over this one period, "
+                               "so check longer-term consistency")
+        note = CATEGORY_RISK_NOTES.get(pick["category"], "")
+
+        reason = f"{lead}{consistency_txt}. {note}".strip()
+        return {
+            "name": pick["name"],
+            "amc": pick["amc"],
+            "scheme_code": pick["scheme_code"],
+            "return_pct": pick["return_pct"],
+            "period": period,
+            "reason": reason,
+        }
+
     # ---------------------------------------------------------------- speech
-    def build_spoken_summary(self, parsed, ranked):
+    def build_spoken_summary(self, parsed, ranked, recommendation=None):
         results = ranked["results"]
         period_label = _PERIOD_KEYS.get(parsed["period"], parsed["period"])
         cat = parsed["category"]
@@ -247,4 +356,10 @@ class FundService:
         parts = []
         for i, r in enumerate(results, 1):
             parts.append(f"Number {i}, {r['name']}, with {r['return_pct']} percent.")
-        return lead + " ".join(parts)
+        body = lead + " ".join(parts)
+
+        if recommendation:
+            body += (f" My pick out of these would be {recommendation['name']}. "
+                     f"{recommendation['reason']} "
+                     "Remember, this is for learning, not investment advice.")
+        return body

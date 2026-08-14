@@ -14,6 +14,9 @@ const answerTitle = document.getElementById("answerTitle");
 const answerMeta = document.getElementById("answerMeta");
 const fundList = document.getElementById("fundList");
 const replayBtn = document.getElementById("replayBtn");
+const recEl = document.getElementById("recommendation");
+const recName = document.getElementById("recName");
+const recReason = document.getElementById("recReason");
 
 let lastSpoken = "";
 
@@ -83,6 +86,15 @@ function render(data) {
       </div>`;
     fundList.appendChild(li);
   }
+
+  if (data.recommendation) {
+    recName.textContent = `${data.recommendation.name} — ${data.recommendation.return_pct}%`;
+    recReason.textContent = data.recommendation.reason;
+    recEl.hidden = false;
+  } else {
+    recEl.hidden = true;
+  }
+
   answerEl.hidden = false;
 }
 

@@ -157,6 +157,25 @@ h1 { font-size: 1.9rem; margin: 0 0 6px; }
 }
 .badge.live { color: var(--good); border-color: rgba(53,199,122,.4); }
 
+.recommendation {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(124,92,255,.16), rgba(79,157,255,.12));
+  border: 1px solid rgba(124,92,255,.4);
+}
+.rec-badge {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #c7b8ff;
+  margin-bottom: 8px;
+}
+.recommendation h3 { margin: 0 0 6px; font-size: 1.05rem; }
+.rec-reason { margin: 0; color: var(--text); font-size: .92rem; line-height: 1.5; }
+
 .heard { text-align: center; color: var(--muted); font-style: italic; margin-top: 18px; min-height: 1.2em; }
 
 footer { margin-top: 34px; text-align: center; }

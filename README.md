@@ -8,7 +8,24 @@ A voice-driven assistant that answers questions like:
 
 You **speak** the question, the bot ranks Indian mutual funds by the requested
 return period (optionally filtered to a category like pharma, technology,
-small cap …), shows the list, and **reads the answer back** to you.
+small cap …), shows the list, **suggests one fund to consider** with the
+reasoning, and **reads the answer back** to you.
+
+## The suggested pick
+
+Beyond the ranked list, the bot highlights **one fund** and explains why. The
+pick is rule-based and transparent (not a black box, and not personalised
+advice):
+
+- It favours **consistency** — a fund that beats its peers' average across the
+  1-, 3-, and 5-year windows, not just the single headline number.
+- Ties break on the requested period's return.
+- A **category risk note** is attached (e.g. "sector funds are concentrated and
+  best kept as a satellite holding"; "small-cap funds suit a 7-year+ horizon"),
+  so you understand the trade-off, not just the number.
+
+Every answer ends with a reminder that this is an educational demo, not
+investment advice.
 
 ---
 
@@ -98,8 +115,13 @@ mutual_fund/
   "results": [
     { "name": "...", "amc": "...", "category": "pharma",
       "category_label": "pharma & healthcare", "scheme_code": 118759,
-      "period": "3y", "return_pct": 27.9, "live": true }
+      "period": "3y", "return_pct": 27.9,
+      "returns_all": { "1y": 26.3, "3y": 28.4, "5y": 20.5 }, "live": true }
   ],
+  "recommendation": {
+    "name": "DSP Healthcare Fund", "return_pct": 28.4, "period": "3y",
+    "reason": "DSP Healthcare Fund looks the strongest of these — it tops the list…"
+  },
   "spoken": "Here are the top 5 pharma & healthcare mutual funds by 3 year return…"
 }
 ```

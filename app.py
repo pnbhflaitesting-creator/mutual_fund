@@ -35,13 +35,15 @@ def query():
         limit=parsed["limit"],
         live=use_live,
     )
-    spoken = service.build_spoken_summary(parsed, ranked)
+    recommendation = service.build_recommendation(parsed, ranked)
+    spoken = service.build_spoken_summary(parsed, ranked, recommendation)
 
     return jsonify({
         "query": text,
         "parsed": parsed,
         "source": ranked["source"],
         "results": ranked["results"],
+        "recommendation": recommendation,
         "spoken": spoken,
     })
 
